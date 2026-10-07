@@ -1,0 +1,24 @@
+---
+description: Wire web pages to API via types + React Query hooks
+globs: apps/web/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Web API wiring
+
+When adding or finishing a backend module:
+
+1. Add payload types in `apps/web/src/api/types.ts`
+2. Add hooks in `apps/web/src/api/queries.ts` (`apiFetch` / `apiPost` → `http://localhost:4000`)
+3. Replace `PhaseSkeleton` on the matching page with real panels/tables
+4. Match existing patterns: `PageHeader`, `Panel`, `StatusPill`, `Table`, `Button`
+
+```tsx
+// ❌ BAD — phase API done, page still skeleton
+<PhaseSkeleton phase={6} title="Strategies" ... />
+
+// ✅ GOOD — page consumes /api/strategies*
+const { data } = useStrategies();
+```
+
+Invalidate related query keys after mutations (`evaluate`, `run`, `reconcile`).

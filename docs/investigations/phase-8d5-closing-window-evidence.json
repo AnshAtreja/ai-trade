@@ -1,0 +1,471 @@
+{
+  "observedAt": "2026-09-17T22:04:06.473Z",
+  "config": {
+    "persistenceMode": "database",
+    "configuredProvider": "kite",
+    "chunkDays": 5,
+    "overlapMinutes": 1
+  },
+  "trace": [
+    {
+      "boundary": "CLI-equivalent service input (persistence disabled)",
+      "instrumentToken": "738561",
+      "interval": "1m",
+      "from": "2026-09-07T03:45:00.000Z",
+      "to": "2026-09-07T10:00:00.000Z"
+    },
+    {
+      "boundary": "HistoricalMarketDataProvider after chunking",
+      "instrumentToken": "738561",
+      "instrumentId": "cmu352ppg0003k93112vt9sag",
+      "exchange": "NSE",
+      "tradingSymbol": "RELIANCE",
+      "interval": "1m",
+      "from": "2026-09-07T03:45:00.000Z",
+      "to": "2026-09-07T10:00:00.000Z"
+    },
+    {
+      "boundary": "KiteBrokerAdapter",
+      "token": "738561",
+      "interval": "minute",
+      "from": "2026-09-07 09:15:00",
+      "to": "2026-09-07 15:29:59",
+      "timezone": "Asia/Kolkata"
+    }
+  ],
+  "requests": [
+    {
+      "url": "https://api.kite.trade/instruments/historical/738561/minute?from=2026-09-07%2009%3A15%3A00&to=2026-09-07%2015%3A29%3A59&oi=1",
+      "from": "2026-09-07 09:15:00",
+      "to": "2026-09-07 15:29:59",
+      "timezone": "Asia/Kolkata",
+      "instrumentToken": "738561",
+      "interval": "minute",
+      "status": 200,
+      "errorType": null,
+      "raw": {
+        "count": 360,
+        "first": "2026-09-07T09:15:00+0530",
+        "last": "2026-09-07T15:14:00+0530",
+        "firstCandle": [
+          "2026-09-07T09:15:00+0530",
+          1323.1,
+          1324.2,
+          1319.4,
+          1320.3,
+          98440,
+          0
+        ],
+        "lastCandle": [
+          "2026-09-07T15:14:00+0530",
+          1307.2,
+          1308,
+          1306,
+          1308,
+          29920,
+          0
+        ],
+        "utcTimestampSha256": "524644c81da94f6170dc2a5da282865e4ce86b446f527e8b5d52096ea8ffe4c4"
+      }
+    },
+    {
+      "url": "https://api.kite.trade/instruments/historical/738561/minute?from=2026-09-07%2009%3A15%3A00&to=2026-09-07%2015%3A30%3A00&oi=1",
+      "from": "2026-09-07 09:15:00",
+      "to": "2026-09-07 15:30:00",
+      "timezone": "Asia/Kolkata",
+      "instrumentToken": "738561",
+      "interval": "minute",
+      "status": 200,
+      "errorType": null,
+      "raw": {
+        "count": 360,
+        "first": "2026-09-07T09:15:00+0530",
+        "last": "2026-09-07T15:14:00+0530",
+        "firstCandle": [
+          "2026-09-07T09:15:00+0530",
+          1323.1,
+          1324.2,
+          1319.4,
+          1320.3,
+          98440,
+          0
+        ],
+        "lastCandle": [
+          "2026-09-07T15:14:00+0530",
+          1307.2,
+          1308,
+          1306,
+          1308,
+          29920,
+          0
+        ],
+        "utcTimestampSha256": "524644c81da94f6170dc2a5da282865e4ce86b446f527e8b5d52096ea8ffe4c4"
+      }
+    },
+    {
+      "url": "https://api.kite.trade/instruments/historical/738561/minute?from=2026-09-07%2015%3A00%3A00&to=2026-09-07%2015%3A30%3A00&oi=1",
+      "from": "2026-09-07 15:00:00",
+      "to": "2026-09-07 15:30:00",
+      "timezone": "Asia/Kolkata",
+      "instrumentToken": "738561",
+      "interval": "minute",
+      "status": 200,
+      "errorType": null,
+      "raw": {
+        "count": 15,
+        "first": "2026-09-07T15:00:00+0530",
+        "last": "2026-09-07T15:14:00+0530",
+        "firstCandle": [
+          "2026-09-07T15:00:00+0530",
+          1304.4,
+          1304.4,
+          1304,
+          1304.1,
+          61536,
+          0
+        ],
+        "lastCandle": [
+          "2026-09-07T15:14:00+0530",
+          1307.2,
+          1308,
+          1306,
+          1308,
+          29920,
+          0
+        ],
+        "utcTimestampSha256": "575817e3e74c25ba6d744dce3cba5fd012297ef672c7418fbc2a141baf072d38"
+      }
+    },
+    {
+      "url": "https://api.kite.trade/instruments/historical/738561/minute?from=2026-09-07%2015%3A15%3A00&to=2026-09-07%2015%3A30%3A00&oi=1",
+      "from": "2026-09-07 15:15:00",
+      "to": "2026-09-07 15:30:00",
+      "timezone": "Asia/Kolkata",
+      "instrumentToken": "738561",
+      "interval": "minute",
+      "status": 200,
+      "errorType": null,
+      "raw": {
+        "count": 0,
+        "first": null,
+        "last": null,
+        "firstCandle": null,
+        "lastCandle": null,
+        "utcTimestampSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    },
+    {
+      "url": "https://api.kite.trade/instruments/historical/738561/minute?from=2026-09-07%2015%3A15%3A00&to=2026-09-07%2015%3A31%3A00&oi=1",
+      "from": "2026-09-07 15:15:00",
+      "to": "2026-09-07 15:31:00",
+      "timezone": "Asia/Kolkata",
+      "instrumentToken": "738561",
+      "interval": "minute",
+      "status": 200,
+      "errorType": null,
+      "raw": {
+        "count": 0,
+        "first": null,
+        "last": null,
+        "firstCandle": null,
+        "lastCandle": null,
+        "utcTimestampSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    }
+  ],
+  "inclusiveEndpointExperiment": {
+    "from": "2026-09-07 15:13:00",
+    "to": "2026-09-07 15:14:00",
+    "timeZone": "Asia/Kolkata",
+    "count": 2,
+    "timestamps": [
+      "2026-09-07T15:13:00+0530",
+      "2026-09-07T15:14:00+0530"
+    ]
+  },
+  "adapter": {
+    "count": 360,
+    "first": "2026-09-07T09:15:00+0530",
+    "last": "2026-09-07T15:14:00+0530"
+  },
+  "normalized": {
+    "count": 360,
+    "first": "2026-09-07T03:45:00.000Z",
+    "last": "2026-09-07T09:44:00.000Z"
+  },
+  "storedBefore": {
+    "count": 360,
+    "first": "2026-09-07T03:45:00.000Z",
+    "last": "2026-09-07T09:44:00.000Z",
+    "sources": [
+      "KITE"
+    ],
+    "sha256": "faead9dac18ec56e1749959ff2181c9fa9ce947de84e7ebcff7404f5bea54678"
+  },
+  "storedAfter": {
+    "count": 360,
+    "first": "2026-09-07T03:45:00.000Z",
+    "last": "2026-09-07T09:44:00.000Z",
+    "sha256": "faead9dac18ec56e1749959ff2181c9fa9ce947de84e7ebcff7404f5bea54678",
+    "unchanged": true
+  },
+  "rawTimestampsEqualStored": true,
+  "legacyValidation": {
+    "instrumentToken": "738561",
+    "interval": "1m",
+    "from": "2026-09-07T03:45:00.000Z",
+    "to": "2026-09-07T10:00:00.000Z",
+    "candleCount": 360,
+    "valid": true,
+    "issues": []
+  },
+  "currentCalendarCoverage": [
+    {
+      "tradingDate": "2026-09-07",
+      "classification": "PARTIAL",
+      "expectedCandles": 375,
+      "actualCandles": 360,
+      "missingCandles": 15,
+      "coveragePercent": 96,
+      "firstCandle": "2026-09-07T03:45:00.000Z",
+      "lastCandle": "2026-09-07T09:44:00.000Z",
+      "openingGap": 0,
+      "closingGap": 15,
+      "internalGaps": 0
+    }
+  ],
+  "storedSmokeSessions": [
+    {
+      "token": "738561",
+      "symbol": "RELIANCE",
+      "sessions": [
+        {
+          "day": "2026-09-07",
+          "count": 360,
+          "first": "2026-09-07T03:45:00.000Z",
+          "last": "2026-09-07T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-08",
+          "count": 360,
+          "first": "2026-09-08T03:45:00.000Z",
+          "last": "2026-09-08T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-09",
+          "count": 360,
+          "first": "2026-09-09T03:45:00.000Z",
+          "last": "2026-09-09T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-10",
+          "count": 360,
+          "first": "2026-09-10T03:45:00.000Z",
+          "last": "2026-09-10T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-11",
+          "count": 360,
+          "first": "2026-09-11T03:45:00.000Z",
+          "last": "2026-09-11T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        }
+      ]
+    },
+    {
+      "token": "341249",
+      "symbol": "HDFCBANK",
+      "sessions": [
+        {
+          "day": "2026-09-07",
+          "count": 360,
+          "first": "2026-09-07T03:45:00.000Z",
+          "last": "2026-09-07T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-08",
+          "count": 360,
+          "first": "2026-09-08T03:45:00.000Z",
+          "last": "2026-09-08T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-09",
+          "count": 360,
+          "first": "2026-09-09T03:45:00.000Z",
+          "last": "2026-09-09T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-10",
+          "count": 360,
+          "first": "2026-09-10T03:45:00.000Z",
+          "last": "2026-09-10T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-11",
+          "count": 360,
+          "first": "2026-09-11T03:45:00.000Z",
+          "last": "2026-09-11T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        }
+      ]
+    },
+    {
+      "token": "408065",
+      "symbol": "INFY",
+      "sessions": [
+        {
+          "day": "2026-09-07",
+          "count": 360,
+          "first": "2026-09-07T03:45:00.000Z",
+          "last": "2026-09-07T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-08",
+          "count": 360,
+          "first": "2026-09-08T03:45:00.000Z",
+          "last": "2026-09-08T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-09",
+          "count": 360,
+          "first": "2026-09-09T03:45:00.000Z",
+          "last": "2026-09-09T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-10",
+          "count": 360,
+          "first": "2026-09-10T03:45:00.000Z",
+          "last": "2026-09-10T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        },
+        {
+          "day": "2026-09-11",
+          "count": 360,
+          "first": "2026-09-11T03:45:00.000Z",
+          "last": "2026-09-11T09:44:00.000Z",
+          "contiguous": true,
+          "sources": [
+            "KITE"
+          ]
+        }
+      ]
+    }
+  ],
+  "currentMasterDerivatives": [
+    {
+      "symbol": "RELIANCE",
+      "contracts": [
+        {
+          "symbol": "RELIANCE26SEPFUT",
+          "name": "\"RELIANCE\"",
+          "expiry": "2026-09-28T18:30:00.000Z"
+        },
+        {
+          "symbol": "RELIANCE26OCTFUT",
+          "name": "\"RELIANCE\"",
+          "expiry": "2026-10-26T18:30:00.000Z"
+        },
+        {
+          "symbol": "RELIANCE26NOVFUT",
+          "name": "\"RELIANCE\"",
+          "expiry": "2026-11-22T18:30:00.000Z"
+        }
+      ]
+    },
+    {
+      "symbol": "HDFCBANK",
+      "contracts": [
+        {
+          "symbol": "HDFCBANK26SEPFUT",
+          "name": "\"HDFCBANK\"",
+          "expiry": "2026-09-28T18:30:00.000Z"
+        },
+        {
+          "symbol": "HDFCBANK26OCTFUT",
+          "name": "\"HDFCBANK\"",
+          "expiry": "2026-10-26T18:30:00.000Z"
+        },
+        {
+          "symbol": "HDFCBANK26NOVFUT",
+          "name": "\"HDFCBANK\"",
+          "expiry": "2026-11-22T18:30:00.000Z"
+        }
+      ]
+    },
+    {
+      "symbol": "INFY",
+      "contracts": [
+        {
+          "symbol": "INFY26SEPFUT",
+          "name": "\"INFY\"",
+          "expiry": "2026-09-28T18:30:00.000Z"
+        },
+        {
+          "symbol": "INFY26OCTFUT",
+          "name": "\"INFY\"",
+          "expiry": "2026-10-26T18:30:00.000Z"
+        },
+        {
+          "symbol": "INFY26NOVFUT",
+          "name": "\"INFY\"",
+          "expiry": "2026-11-22T18:30:00.000Z"
+        }
+      ]
+    }
+  ],
+  "writesPerformed": false,
+  "scope": "One instrument/day HTTP reads; existing smoke-test rows inspected read-only. Current derivatives are not point-in-time CAS eligibility."
+}

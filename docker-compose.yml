@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: trade_pilot_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - trade_pilot_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d trade_pilot_ai"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    environment:
+      # Inside Compose, Postgres is the service hostname — not localhost.
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/trade_pilot_ai?schema=public
+      DATARL: postgresql://postgres:postgres@postgres:5432/trade_pilot_ai?schema=public
+      PERSISTENCE_MODE: database
+      PORT: "4000"
+      WEB_APP_URL: http://localhost:5173
+      KITE_REDIRECT_URL: http://127.0.0.1:4000/api/broker/kite/callback
+    volumes:
+      # Share encrypted Kite session between host CLI and API container (UI login ↔ historical:download).
+      - ./apps/api/.secure:/repo/apps/api/.secure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:4000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # Browser calls the host-mapped API port.
+        VITE_API_BASE_URL: http://localhost:4000
+    ports:
+      - "5173:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  trade_pilot_pg:

@@ -1,0 +1,31 @@
+{
+  "name": "trade-pilot-ai",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace web & npm run dev --workspace api",
+    "dev:web": "npm run dev --workspace web",
+    "dev:api": "npm run dev --workspace api",
+    "build": "npm run build --workspace web && npm run build --workspace api",
+    "lint": "npm run lint --workspace web && npm run lint --workspace api",
+    "replay": "tsx apps/api/src/modules/scanner/replay/cli.ts",
+    "backtest:replay": "npm run backtest:replay --workspace api",
+    "backtest:execute": "npm run backtest:execute --workspace api",
+    "backtest:analyze": "npm run backtest:analyze --workspace api",
+    "backtest:robustness-recover-classification": "npm run backtest:robustness-recover-classification --workspace api",
+    "backtest:controlled-optimization": "npm run backtest:controlled-optimization --workspace api",
+    "backtest:final-evidence-gate": "npm run backtest:final-evidence-gate --workspace api",
+    "historical:coverage": "npm run historical:coverage --workspace api",
+    "historical:bulk-download": "npm run historical:bulk-download --workspace api",
+    "historical:dataset-validate": "npm run historical:dataset-validate --workspace api",
+    "prisma:generate": "npm run prisma:generate --workspace api",
+    "prisma:migrate": "npm run prisma:migrate --workspace api",
+    "prisma:seed": "npm run prisma:seed --workspace api",
+    "env:link": "bash scripts/ensure-env-link.sh",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
+  }
+}

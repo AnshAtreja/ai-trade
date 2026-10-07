@@ -1,0 +1,59 @@
+{
+  "name": "api",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "market-context:manifest": "tsx src/modules/market-intelligence/context-cli.ts manifest",
+    "market-context:analyze": "tsx src/modules/market-intelligence/context-cli.ts analyze",
+    "feature-ablation:spec": "tsx src/modules/market-intelligence/feature-ablation-cli.ts spec",
+    "feature-ablation:capture": "tsx src/modules/market-intelligence/feature-ablation-cli.ts capture",
+    "feature-ablation:join": "tsx src/modules/market-intelligence/feature-ablation-join-cli.ts",
+    "feature-ablation:analyze": "tsx src/modules/market-intelligence/feature-ablation-analysis-cli.ts",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "replay": "tsx src/modules/scanner/replay/cli.ts",
+    "backtest:replay": "tsx src/modules/scanner/replay/cli.ts",
+    "backtest:execute": "tsx src/modules/scanner/replay/execution-cli.ts",
+    "backtest:analyze": "tsx src/modules/scanner/replay/analytics-cli.ts",
+    "backtest:walk-forward": "tsx src/modules/scanner/replay/walk-forward-cli.ts",
+    "backtest:robustness": "tsx src/modules/scanner/replay/robustness-cli.ts",
+    "backtest:robustness-coordinator": "tsx src/modules/scanner/replay/robustness-coordinator-cli.ts",
+    "backtest:robustness-full": "tsx src/modules/scanner/replay/robustness-experiment-cli.ts",
+    "backtest:robustness-recover-classification": "tsx src/modules/scanner/replay/robustness-classification-recovery-cli.ts",
+    "backtest:controlled-optimization": "tsx src/modules/scanner/replay/controlled-optimization-cli.ts",
+    "backtest:final-evidence-gate": "tsx src/modules/scanner/replay/final-evidence-gate-cli.ts",
+    "backtest:walk-forward-migrate": "tsx src/modules/scanner/replay/walk-forward-migrate-cli.ts",
+    "historical:coverage": "tsx src/modules/historical-market-data/cli.ts coverage",
+    "historical:download": "tsx src/modules/historical-market-data/cli.ts download",
+    "historical:validate": "tsx src/modules/historical-market-data/cli.ts validate",
+    "historical:bulk-download": "tsx src/modules/historical-market-data/cli.ts bulk-download",
+    "historical:dataset-validate": "tsx src/modules/historical-market-data/cli.ts dataset-validate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed",
+    "prisma:deploy": "prisma migrate deploy"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@types/ws": "^8.18.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "ws": "^8.21.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "prisma": "^5.22.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  }
+}

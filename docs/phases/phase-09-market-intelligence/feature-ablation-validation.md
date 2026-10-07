@@ -1,0 +1,61 @@
+# Phase 9D - Historical Feature Validation and Ablation
+
+**Status:** COMPLETE for the retrospective Phase 9D feature-validation gate. No feature was validated as a trading filter; Phase 9E remains pending.
+
+## Research question
+
+Do the deterministic Phase 9 market, sector, relative-strength, breadth, volatility and regime features describe materially different *observed outcomes* for the four unchanged Phase 8 strategy baselines? This is a retrospective, descriptive question. It does not authorize a trading filter, new parameter, candidate strategy, risk rule or model.
+
+The immutable `PHASE_9D_FEATURE_ABLATION_V1` JSON and Markdown spec live in `apps/artifacts/phase9d/`. Its SHA-256 is `9d4b820649ef661eb601fdf4506592d91a218ee13744ad08abb9356c5d6132c7`. It was written before the full setup/outcome join. The spec pins the Phase 8 evidence and baseline result file hashes, Phase 9C index-context dataset and regime-definition identity, four v1 strategies, research range, folds, partition roles, feature registry, exact semantic bins, four allowed two-way interactions, activity gate, evidence labels, concentration diagnostics and no-mutation assertions. Changes to that method require a new spec/version and a fresh study, not an edit to this V1 after seeing outcomes.
+
+## Data provenance and capture
+
+The frozen Phase 8E compact artifact contains per-partition aggregate analytics, but not every setup/trade timestamp required for a point-in-time join. Phase 9D therefore reruns the **same** four strategies with the existing Phase 8B replay and 8C historical paper execution over the same 25 instruments, four folds and three partitions. A research-only capture hook records `SETUP_DETECTED` evaluations and raw historical trades. It does not alter replay, scanner, strategy, execution, cost or eligibility logic. Each completed strategy partition must match the frozen Phase 8E `metrics` and every substantive `analytics` field exactly before its capture is accepted. The one exception is the child execution `analytics.metadata.runId`, which hashes the complete order/fill/trade ledger and is retained as an explicit identity divergence when all other analytics agree. The old compact artifact lacks that raw ledger, so a changed child ID cannot be attributed to a particular order field; it must not be silently called identical execution. Any outcome, quality, sample or timing analytics difference remains a stop condition.
+
+The capture worker writes one compact, content-hashed JSON per fold/partition using atomic rename. On resume, an existing file is reused only after its format, frozen spec, baseline identity, partition and content hash are verified. A repeated scanner evaluation may emit the same setup identity many times. The analysis preserves that evaluation count separately, deduplicates the setup identity within its strategy/fold/partition, and attaches an actual trade outcome at most once. A large setup-evaluation count is **not** a large independent trade sample. Overlapping folds also retain their original provenance and are not treated as independent market observations.
+
+## Point-in-time context
+
+Historical candle timestamps mark the **start** of a one-minute bar. The 9D decision-availability timestamp is the bar close, exactly one minute later. The original replay/setup timestamp is retained. Phase 9 context is never attached from after that close. Every source feature, benchmark metric and relative benchmark observation is checked against the decision time. A later candle cannot enter an earlier feature snapshot.
+
+The context join reads the stored eight-index dataset and the strict-complete-session 25-equity research view. It runs the existing 9A feature engine, 9B context engine and frozen 9C regime engine in chronological order. The 9C volatility proxy uses trailing observations even between strategy setups, so the regime engine must advance on **every** market frame, not only when a setup occurs. Only requested setup context points are written. Before joining, the index manifest is recomputed read-only and must match the frozen 9C ID. The full context stream's benchmark/equity observation counts and regime distributions are compared with the frozen 9C descriptive artifact. This catches a join that used different market history while still producing plausible-looking point labels.
+
+Missing equity sessions stay excluded by the Phase 8D.5 `requireCompleteSession: true` contract. The two provider-missing index minutes remain gaps. Raw provider rows on calendar holidays are not policy-valid research candles. Index volume is zero in this dataset, so an official index VWAP is `NOT_APPLICABLE`; no index volume or candle is fabricated. The 25-stock breadth denominator and current-sector membership backcast are explicit source limitations.
+
+## Pre-registered analysis
+
+The primary view is TRAIN. VALIDATION checks whether a descriptive relationship has the same direction on separate chronological data. Previously inspected TEST outcomes are a retrospective audit only and never enter evidence-status selection. Analyses preserve strategy, fold, partition, instrument, sector, direction and coarse session-progress provenance.
+
+The baseline is the unchanged strategy outcome. Market, sector, relative, regime, instrument and time-conditioned views are **slices of that same outcome**, not counterfactual trades from newly filtered strategies. One group reports setup evaluations, distinct setup identities, closed/incomplete trades, wins/losses, gross P&L, charges, net P&L, expectancy, R-based expectancy, profit factor, holding time, sample status and concentration. Metrics reuse Phase 8D trade-R and profit-factor semantics. A conditioned maximum drawdown is deliberately null because selected trade rows alone do not reconstruct the execution equity path. Fold-baseline drawdown remains the frozen Phase 8E value.
+
+The spec fixes signed percentage, ATR percentage, breadth percentage, session-distance and five equal-duration session-progress bins *before* outcomes. Equal-duration buckets adapt to Muhurat and Budget special sessions. No outcome-dependent quantiles or threshold search are used. Four interactions are pre-registered; arbitrary feature combinations are not mined. Every reported contrast is counted, including quality/missing bins, rather than showing only attractive slices. No p-value or statistical-significance claim is made.
+
+A slice is `SUFFICIENT_SAMPLE` only with at least 30 closed trades from at least two folds contributing five or more each. `LOW_SAMPLE`, `NO_SAMPLE`, and `NO_ACTIVITY_FOR_FEATURE_ABLATION` are explicit alternatives. Evidence statuses are descriptive; none means profitable, deployable, `TRADE` or `DO_NOT_TRADE`. Even a favorable pooled sign is qualified by fold, instrument and sector concentration. The market's large `UNCERTAIN` share and the breakdown strategy's low/zero trade activity may limit what can be inferred; these are not reasons to retune 9C or invent trades.
+
+## Completed study and findings
+
+The 12 fold/partition capture files were accepted against the frozen Phase 8E metrics and substantive analytics. After PostgreSQL became unavailable during fold-03/TEST, the resumed coordinator reused the eight valid captures and completed the remaining four; it did not start over. One child execution-ledger `runId` differs for `opening-momentum:v1` fold-01/TRAIN (`d7c6d634f3114c58` frozen versus `21e4c619e5d8d617` replayed). The raw original ledger was not retained, so the reason for that ID-only divergence is unresolved. The difference is explicit in the join and result; every economic and quality metric still matched exactly.
+
+The [join manifest](../../../apps/artifacts/phase9d/join-8ee491c3f2afa862002240d7.json) records 720,800 setup evaluations, 55,080 distinct strategy/fold/partition setup identities and 31,944 unique instrument/time context requests. All 31,944 points joined; none were missing. Its full market stream exactly reproduced Phase 9C's 726,478 benchmark observations, 2,250,000 eligible equity observations, 90,330 market-regime updates, 901,050 sector-regime updates and frozen trend/volatility distributions. The [joined points](../../../apps/artifacts/phase9d/join-points-8ee491c3f2afa862002240d7.ndjson) are content-hashed, compact, point-in-time observations rather than a new OHLCV dataset.
+
+The [machine-readable result](../../../apps/artifacts/phase9d/feature-ablation-245e39306b2220f184c9a36f.json) and [descriptive report](../../../apps/artifacts/phase9d/feature-ablation-245e39306b2220f184c9a36f.md) contain 160 closed strategy-partition trade records across overlapping folds, 8,025 fold-aware groups, 1,659 pre-registered descriptive contrasts and 377 interaction contrasts. No inferential test or p-value was run. No group satisfied the pre-registered 30-closed-trade/two-contributing-fold sample gate: 2,589 groups are `LOW_SAMPLE`, 3,384 are `NO_SAMPLE`, and 2,052 have `NO_ACTIVITY_FOR_FEATURE_ABLATION`. The 548 TRAIN-side evidence statuses are 406 `INSUFFICIENT_SAMPLE` and 142 `NO_ACTIVITY_FOR_ABLATION`. All six feature families are `INSUFFICIENT_EVIDENCE` for outcome-based use, even where feature values themselves are available.
+
+The baseline trade counts by partition are: breakout 19 TRAIN / 15 VALIDATION / 22 TEST; momentum 21 / 19 / 16; opening-momentum 14 / 16 / 18; breakdown 0 / 0 / 0. Breakdown has setup observations but no closed trades, so it supports setup-context description only. The TEST baseline net P&L from the frozen run remains breakout -7,737.22, momentum +99,863.43 and opening-momentum -34,907.02; those are *not* newly selected strategy outcomes. All momentum closed trades in each partition were labeled market-trend `UNCERTAIN`. In breakout TEST, 19 of 22 trades were `UNCERTAIN`, three were `RANGE_BOUND`, and no `TRENDING_UP` setup produced a closed trade. This makes the regime ablation underpowered; it does not warrant changing `MARKET_REGIME_V1`.
+
+At setup level, market trend was `AVAILABLE` for 6,376/55,080 identities, with 48,678 `INSUFFICIENT_HISTORY` and 26 `INSUFFICIENT_COVERAGE`. Market 15m returns were available for 20,900; sector relative-to-market state for 18,739; instrument ATR% for 23,403. Market index VWAP was unavailable for all 55,080 because Kite index volume is zero. Availability and quality are preserved per feature, not replaced with zero. The three registered Pearson redundancy checks yielded 0.770 for market 15m/30m returns (3,853 paired points), 0.885 for instrument-vs-market/instrument-vs-sector 15m relative returns (11,359), and 0.512 for sector advance/above-VWAP breadth (27,144). These are descriptive overlap diagnostics, not feature-selection decisions.
+
+The result ID is `245e39306b2220f184c9a36f` and join ID is `8ee491c3f2afa862002240d7`. Re-running the read-only join and analysis produced the same IDs and verified the existing immutable artifact bytes. The join-points SHA-256 is `f25ba4c3c94cfbd501eb8ac2759651a565bfed64607ccb967e97aa4160f9b4b3`; the final JSON file SHA-256 is `908d18f82654b5fcb5ac0d25c93b526ba4265f12a0d2af707b267cc022f77132`.
+
+## Verification
+
+- [x] Frozen Phase 8 partition metrics and substantive analytics reproduced; the one child execution-ID-only divergence is enumerated above.
+- [x] All 12 fold/partition captures passed identity and content-hash checks.
+- [x] Stored index manifest and full-stream 9C regime parity passed.
+- [x] The future-safe point join accounted for all 31,944 requested context points.
+- [x] Focused 9D tests (9/9), full API and PostgreSQL-backed suite (41 files, 320 tests), TypeScript lint/build, and repeat byte-identical stable artifacts passed.
+
+Phase 9D never writes canonical candles, an operational paper account or live Kite orders. It adds no ML, Kronos or strategy filter.
+
+## Phase 9E handoff
+
+The [live integration](live-integration.md) consumes the frozen 9A/9B/9C logic as read-only context. The 9D finding above does **not** authorize any feature-based strategy gate or recommendation. Phase 9E is not yet closed because current-day NSE CAS eligibility and an authenticated open-market Kite feed have not been verified; that operational blocker does not alter the 9D artifact or its negative trading-filter conclusion.

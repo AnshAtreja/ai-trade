@@ -1,0 +1,21 @@
+---
+description: Keep ROADMAP, phase files, README, and UI status labels consistent
+alwaysApply: true
+---
+
+# Docs and status sync
+
+When finishing phase work, update **all** of:
+
+| Source | Must reflect |
+| --- | --- |
+| `docs/ROADMAP.md` | Phase status (`done` / `planned`) |
+| `docs/phases/phase-XX-*.md` | Status + acceptance checkboxes |
+| Root `README.md` | Implementation status table |
+| Matching web page | `StatusPill` / copy (not “in progress” for done phases) |
+
+Feature docs live under `docs/` (e.g. `docs/strategies.md`, `docs/scanner.md`, `docs/paper-trading.md`) — not under `apps/docs/`.
+
+Operator “what does this button do?” docs live under `docs/ui/` — update them whenever console controls change (see rule `ui-operator-guide`).
+
+Do not invent future-phase features (ATR/RSI, Kronos, LLM) into earlier UI pages.

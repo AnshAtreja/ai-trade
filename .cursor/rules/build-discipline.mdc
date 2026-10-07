@@ -1,0 +1,11 @@
+---
+description: One phase at a time; no scope creep into later roadmap items
+alwaysApply: true
+---
+
+# Build discipline
+
+- Implement **one phase at a time** per `docs/ROADMAP.md` dependency order.
+- Read the phase file before coding; treat Out of scope as hard limits.
+- Prefer extending existing modules over new parallel stacks.
+- If acceptance criteria conflict with “ship API only”, update the phase file to require UI — do not silently drop the UI checkbox.

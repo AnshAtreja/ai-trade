@@ -1,0 +1,26 @@
+---
+description: Phase work is incomplete without API, web UI, and docs sync
+alwaysApply: true
+---
+
+# Phase completion gate
+
+A phase is **not done** when only the API exists.
+
+## Required before marking `done`
+
+1. **API** — routes/services/tests for the phase scope
+2. **Web** — matching `apps/web/src/pages/*` page calls real endpoints (no leftover `PhaseSkeleton` for that phase)
+3. **Types/hooks** — `apps/web/src/api/types.ts` + `queries.ts` cover the new payloads
+4. **Docs** — `docs/phases/phase-XX-short-name/{overview,roadmap,implementation,interview}.md` updated; feature doc if the phase has one; root `README.md` status table matches `docs/ROADMAP.md`
+
+## Explicitly forbidden
+
+- Marking phase `done` while the product page still shows “skeleton” / “coming in Phase N”
+- Leaving root README saying later phases are “planned” when ROADMAP says `done`
+- Recreating standalone `docs/phases/phase-XX-name.md` files instead of using the named phase folder
+- Shipping API-only and deferring UI “to a later phase” unless the phase doc says **API-only by design** and the UI page is listed as out of scope
+
+## Why this exists
+
+Phases 5–7 were marked done API-first; Strategies/Scanner/Paper pages stayed skeletons. Users see unfinished product even when backends work.

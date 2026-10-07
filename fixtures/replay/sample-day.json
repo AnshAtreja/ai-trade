@@ -1,0 +1,92 @@
+[
+  {
+    "symbol": "NVDA",
+    "timestamp": "2026-05-26T09:30:00.000Z",
+    "open": 1000,
+    "high": 1008,
+    "low": 998,
+    "close": 1006,
+    "volume": 1200000
+  },
+  {
+    "symbol": "TSLA",
+    "timestamp": "2026-05-26T09:30:00.000Z",
+    "open": 186,
+    "high": 187,
+    "low": 184,
+    "close": 185,
+    "volume": 1500000
+  },
+  {
+    "symbol": "NVDA",
+    "timestamp": "2026-05-26T09:45:00.000Z",
+    "open": 1006,
+    "high": 1025,
+    "low": 1004,
+    "close": 1022,
+    "volume": 2400000
+  },
+  {
+    "symbol": "TSLA",
+    "timestamp": "2026-05-26T09:45:00.000Z",
+    "open": 185,
+    "high": 185.4,
+    "low": 180,
+    "close": 181,
+    "volume": 1900000
+  },
+  {
+    "symbol": "NVDA",
+    "timestamp": "2026-05-26T10:00:00.000Z",
+    "open": 1022,
+    "high": 1050,
+    "low": 1020,
+    "close": 1048,
+    "volume": 5200000
+  },
+  {
+    "symbol": "TSLA",
+    "timestamp": "2026-05-26T10:00:00.000Z",
+    "open": 181,
+    "high": 181.2,
+    "low": 176,
+    "close": 176.5,
+    "volume": 3100000
+  },
+  {
+    "symbol": "NVDA",
+    "timestamp": "2026-05-26T10:15:00.000Z",
+    "open": 1048,
+    "high": 1069,
+    "low": 1042,
+    "close": 1065,
+    "volume": 4100000
+  },
+  {
+    "symbol": "TSLA",
+    "timestamp": "2026-05-26T10:15:00.000Z",
+    "open": 176.5,
+    "high": 177,
+    "low": 171,
+    "close": 172,
+    "volume": 3600000
+  },
+  {
+    "symbol": "NVDA",
+    "timestamp": "2026-05-26T10:30:00.000Z",
+    "open": 1065,
+    "high": 1075,
+    "low": 1057,
+    "close": 1072,
+    "volume": 2800000
+  },
+  {
+    "symbol": "TSLA",
+    "timestamp": "2026-05-26T10:30:00.000Z",
+    "open": 172,
+    "high": 173,
+    "low": 168.8,
+    "close": 169.5,
+    "volume": 3200000
+  }
+]

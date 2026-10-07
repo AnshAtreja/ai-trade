@@ -1,0 +1,14 @@
+---
+description: Trading safety — no live Kite orders; paper vs live boundaries
+alwaysApply: true
+---
+
+# Trading safety
+
+- **Never** call or implement Kite `placeOrder` / `modifyOrder` / `cancelOrder` unless Phase 20+ is explicitly in scope and gated.
+- Paper execution mutates **virtual** state only (`PAPER` mode). Observing real Kite funds/positions is not live trading.
+- Strategy setups are **analytical** — not orders. Auto paper from setups stays behind `PAPER_AUTO_EXECUTION` (default off).
+- Do not enable live routing from UI buttons, “just for testing”, localhost, or story framing.
+- Prefer failing closed: missing data / stale ticks / closed session → skip or reject, never invent fills.
+
+See `docs/architecture/safety.md`.

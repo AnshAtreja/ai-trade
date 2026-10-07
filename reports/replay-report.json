@@ -1,0 +1,420 @@
+{
+  "report": {
+    "totalCandlesReplayed": 10,
+    "totalSignalsGenerated": 2,
+    "totalPaperTrades": 1,
+    "winningTrades": 1,
+    "losingTrades": 0,
+    "winRate": 100,
+    "grossProfit": 42.64,
+    "grossLoss": 0,
+    "netPnl": 42.64,
+    "maxDrawdown": 0,
+    "averageRewardToRisk": 2,
+    "bestTrade": {
+      "id": "paper_1",
+      "symbol": "NVDA",
+      "side": "BUY",
+      "quantity": 4,
+      "entryPrice": 1022,
+      "stopLoss": 1016.67,
+      "targetPrice": 1032.66,
+      "maxLoss": 21.32,
+      "aiExplanation": "NVDA: bullish scan at 68/100. Watch for a long setup; wait for confirmation. Invalidation: $1016.67. No outcome is guaranteed.",
+      "strategyName": "Intraday Breakout",
+      "openedAt": "2026-05-26T09:45:00.000Z",
+      "lastPrice": 1032.66,
+      "status": "CLOSED",
+      "updatedAt": "2026-05-26T10:00:00.000Z",
+      "pnl": 42.64,
+      "exitPrice": 1032.66,
+      "exitReason": "TARGET",
+      "closedAt": "2026-05-26T10:00:00.000Z"
+    },
+    "worstTrade": {
+      "id": "paper_1",
+      "symbol": "NVDA",
+      "side": "BUY",
+      "quantity": 4,
+      "entryPrice": 1022,
+      "stopLoss": 1016.67,
+      "targetPrice": 1032.66,
+      "maxLoss": 21.32,
+      "aiExplanation": "NVDA: bullish scan at 68/100. Watch for a long setup; wait for confirmation. Invalidation: $1016.67. No outcome is guaranteed.",
+      "strategyName": "Intraday Breakout",
+      "openedAt": "2026-05-26T09:45:00.000Z",
+      "lastPrice": 1032.66,
+      "status": "CLOSED",
+      "updatedAt": "2026-05-26T10:00:00.000Z",
+      "pnl": 42.64,
+      "exitPrice": 1032.66,
+      "exitReason": "TARGET",
+      "closedAt": "2026-05-26T10:00:00.000Z"
+    }
+  },
+  "trades": [
+    {
+      "id": "paper_1",
+      "symbol": "NVDA",
+      "side": "BUY",
+      "quantity": 4,
+      "entryPrice": 1022,
+      "stopLoss": 1016.67,
+      "targetPrice": 1032.66,
+      "maxLoss": 21.32,
+      "aiExplanation": "NVDA: bullish scan at 68/100. Watch for a long setup; wait for confirmation. Invalidation: $1016.67. No outcome is guaranteed.",
+      "strategyName": "Intraday Breakout",
+      "openedAt": "2026-05-26T09:45:00.000Z",
+      "lastPrice": 1032.66,
+      "status": "CLOSED",
+      "updatedAt": "2026-05-26T10:00:00.000Z",
+      "pnl": 42.64,
+      "exitPrice": 1032.66,
+      "exitReason": "TARGET",
+      "closedAt": "2026-05-26T10:00:00.000Z"
+    }
+  ],
+  "debug": [
+    {
+      "timestamp": "2026-05-26T09:30:00.000Z",
+      "instruments": [
+        {
+          "symbol": "NVDA",
+          "currentPrice": 1006,
+          "openPrice": 1000,
+          "previousClose": 1000,
+          "currentVolume": 1200000,
+          "averageVolume": 1200000,
+          "dayHigh": 1008,
+          "dayLow": 998,
+          "vwap": 1006,
+          "previousHigh": 1008,
+          "previousLow": 998
+        },
+        {
+          "symbol": "TSLA",
+          "currentPrice": 185,
+          "openPrice": 186,
+          "previousClose": 186,
+          "currentVolume": 1500000,
+          "averageVolume": 1500000,
+          "dayHigh": 187,
+          "dayLow": 184,
+          "vwap": 185,
+          "previousHigh": 187,
+          "previousLow": 184
+        }
+      ],
+      "scannerOutput": [
+        {
+          "symbol": "NVDA",
+          "direction": "BULLISH",
+          "score": 20,
+          "matchedSignals": [
+            "PRICE_NEAR_DAY_HIGH"
+          ],
+          "explanation": "NVDA is ranked bullish with a 20/100 score because it shows trading near day high $1008.00. Price is above VWAP $1006.00."
+        },
+        {
+          "symbol": "TSLA",
+          "direction": "NEUTRAL",
+          "score": 0,
+          "matchedSignals": [],
+          "explanation": "TSLA has no strong intraday scanner signals, so it remains neutral with a 0/100 score."
+        }
+      ],
+      "signalsGenerated": []
+    },
+    {
+      "timestamp": "2026-05-26T09:45:00.000Z",
+      "instruments": [
+        {
+          "symbol": "NVDA",
+          "currentPrice": 1022,
+          "openPrice": 1000,
+          "previousClose": 1000,
+          "currentVolume": 3600000,
+          "averageVolume": 1800000,
+          "dayHigh": 1025,
+          "dayLow": 998,
+          "vwap": 1016.67,
+          "previousHigh": 1008,
+          "previousLow": 998
+        },
+        {
+          "symbol": "TSLA",
+          "currentPrice": 181,
+          "openPrice": 186,
+          "previousClose": 186,
+          "currentVolume": 3400000,
+          "averageVolume": 1700000,
+          "dayHigh": 187,
+          "dayLow": 180,
+          "vwap": 182.76,
+          "previousHigh": 187,
+          "previousLow": 184
+        }
+      ],
+      "scannerOutput": [
+        {
+          "symbol": "NVDA",
+          "direction": "BULLISH",
+          "score": 68,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "PRICE_NEAR_DAY_HIGH",
+            "BREAKOUT_ABOVE_PREVIOUS_HIGH"
+          ],
+          "explanation": "NVDA is ranked bullish with a 68/100 score because it shows volume 2.00x average, trading near day high $1025.00, above previous high $1008.00. Price is above VWAP $1016.67."
+        },
+        {
+          "symbol": "TSLA",
+          "direction": "BEARISH",
+          "score": 54,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "BREAKDOWN_BELOW_PREVIOUS_LOW"
+          ],
+          "explanation": "TSLA is ranked bearish with a 54/100 score because it shows volume 2.00x average, below previous low $184.00. Price is below VWAP $182.76."
+        }
+      ],
+      "signalsGenerated": [
+        {
+          "symbol": "NVDA",
+          "timestamp": "2026-05-26T09:45:00.000Z",
+          "strategyName": "Intraday Breakout",
+          "scanner": {
+            "symbol": "NVDA",
+            "direction": "BULLISH",
+            "score": 68,
+            "matchedSignals": [
+              "VOLUME_SPIKE",
+              "PRICE_NEAR_DAY_HIGH",
+              "BREAKOUT_ABOVE_PREVIOUS_HIGH"
+            ],
+            "explanation": "NVDA is ranked bullish with a 68/100 score because it shows volume 2.00x average, trading near day high $1025.00, above previous high $1008.00. Price is above VWAP $1016.67."
+          },
+          "tradeSignal": {
+            "symbol": "NVDA",
+            "side": "BUY",
+            "entryPrice": 1022,
+            "stopLoss": 1016.67,
+            "targetPrice": 1032.66,
+            "quantity": 1,
+            "timestamp": "2026-05-26T09:45:00.000Z"
+          },
+          "risk": {
+            "allowed": true,
+            "rejectionReasons": [],
+            "calculatedQuantity": 4,
+            "maxLoss": 21.32
+          },
+          "rewardToRisk": 2
+        },
+        {
+          "symbol": "TSLA",
+          "timestamp": "2026-05-26T09:45:00.000Z",
+          "strategyName": "Intraday Breakdown",
+          "scanner": {
+            "symbol": "TSLA",
+            "direction": "BEARISH",
+            "score": 54,
+            "matchedSignals": [
+              "VOLUME_SPIKE",
+              "BREAKDOWN_BELOW_PREVIOUS_LOW"
+            ],
+            "explanation": "TSLA is ranked bearish with a 54/100 score because it shows volume 2.00x average, below previous low $184.00. Price is below VWAP $182.76."
+          },
+          "tradeSignal": {
+            "symbol": "TSLA",
+            "side": "SHORT",
+            "entryPrice": 181,
+            "stopLoss": 182.76,
+            "targetPrice": 177.48,
+            "quantity": 1,
+            "timestamp": "2026-05-26T09:45:00.000Z"
+          },
+          "risk": {
+            "allowed": false,
+            "rejectionReasons": [
+              {
+                "code": "SHORT_SELLING_NOT_ALLOWED",
+                "message": "Short selling is disabled for this risk profile."
+              }
+            ],
+            "calculatedQuantity": 27,
+            "maxLoss": 47.52
+          },
+          "rewardToRisk": 2
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-05-26T10:00:00.000Z",
+      "instruments": [
+        {
+          "symbol": "NVDA",
+          "currentPrice": 1048,
+          "openPrice": 1000,
+          "previousClose": 1000,
+          "currentVolume": 8800000,
+          "averageVolume": 2933333.33,
+          "dayHigh": 1050,
+          "dayLow": 998,
+          "vwap": 1035.18,
+          "previousHigh": 1025,
+          "previousLow": 998
+        },
+        {
+          "symbol": "TSLA",
+          "currentPrice": 176.5,
+          "openPrice": 186,
+          "previousClose": 186,
+          "currentVolume": 6500000,
+          "averageVolume": 2166666.67,
+          "dayHigh": 187,
+          "dayLow": 176,
+          "vwap": 179.78,
+          "previousHigh": 187,
+          "previousLow": 180
+        }
+      ],
+      "scannerOutput": [
+        {
+          "symbol": "NVDA",
+          "direction": "BULLISH",
+          "score": 68,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "PRICE_NEAR_DAY_HIGH",
+            "BREAKOUT_ABOVE_PREVIOUS_HIGH"
+          ],
+          "explanation": "NVDA is ranked bullish with a 68/100 score because it shows volume 3.00x average, trading near day high $1050.00, above previous high $1025.00. Price is above VWAP $1035.18."
+        },
+        {
+          "symbol": "TSLA",
+          "direction": "BEARISH",
+          "score": 68,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "PRICE_NEAR_DAY_LOW",
+            "BREAKDOWN_BELOW_PREVIOUS_LOW"
+          ],
+          "explanation": "TSLA is ranked bearish with a 68/100 score because it shows volume 3.00x average, trading near day low $176.00, below previous low $180.00. Price is below VWAP $179.78."
+        }
+      ],
+      "signalsGenerated": []
+    },
+    {
+      "timestamp": "2026-05-26T10:15:00.000Z",
+      "instruments": [
+        {
+          "symbol": "NVDA",
+          "currentPrice": 1065,
+          "openPrice": 1000,
+          "previousClose": 1000,
+          "currentVolume": 12900000,
+          "averageVolume": 3225000,
+          "dayHigh": 1069,
+          "dayLow": 998,
+          "vwap": 1044.66,
+          "previousHigh": 1050,
+          "previousLow": 998
+        },
+        {
+          "symbol": "TSLA",
+          "currentPrice": 172,
+          "openPrice": 186,
+          "previousClose": 186,
+          "currentVolume": 10100000,
+          "averageVolume": 2525000,
+          "dayHigh": 187,
+          "dayLow": 171,
+          "vwap": 177,
+          "previousHigh": 187,
+          "previousLow": 176
+        }
+      ],
+      "scannerOutput": [
+        {
+          "symbol": "NVDA",
+          "direction": "BULLISH",
+          "score": 68,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "PRICE_NEAR_DAY_HIGH",
+            "BREAKOUT_ABOVE_PREVIOUS_HIGH"
+          ],
+          "explanation": "NVDA is ranked bullish with a 68/100 score because it shows volume 4.00x average, trading near day high $1069.00, above previous high $1050.00. Price is above VWAP $1044.66."
+        },
+        {
+          "symbol": "TSLA",
+          "direction": "BEARISH",
+          "score": 54,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "BREAKDOWN_BELOW_PREVIOUS_LOW"
+          ],
+          "explanation": "TSLA is ranked bearish with a 54/100 score because it shows volume 4.00x average, below previous low $176.00. Price is below VWAP $177.00."
+        }
+      ],
+      "signalsGenerated": []
+    },
+    {
+      "timestamp": "2026-05-26T10:30:00.000Z",
+      "instruments": [
+        {
+          "symbol": "NVDA",
+          "currentPrice": 1072,
+          "openPrice": 1000,
+          "previousClose": 1000,
+          "currentVolume": 15700000,
+          "averageVolume": 3140000,
+          "dayHigh": 1075,
+          "dayLow": 998,
+          "vwap": 1049.54,
+          "previousHigh": 1069,
+          "previousLow": 998
+        },
+        {
+          "symbol": "TSLA",
+          "currentPrice": 169.5,
+          "openPrice": 186,
+          "previousClose": 186,
+          "currentVolume": 13300000,
+          "averageVolume": 2660000,
+          "dayHigh": 187,
+          "dayLow": 168.8,
+          "vwap": 175.2,
+          "previousHigh": 187,
+          "previousLow": 171
+        }
+      ],
+      "scannerOutput": [
+        {
+          "symbol": "NVDA",
+          "direction": "BULLISH",
+          "score": 68,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "PRICE_NEAR_DAY_HIGH",
+            "BREAKOUT_ABOVE_PREVIOUS_HIGH"
+          ],
+          "explanation": "NVDA is ranked bullish with a 68/100 score because it shows volume 5.00x average, trading near day high $1075.00, above previous high $1069.00. Price is above VWAP $1049.54."
+        },
+        {
+          "symbol": "TSLA",
+          "direction": "BEARISH",
+          "score": 68,
+          "matchedSignals": [
+            "VOLUME_SPIKE",
+            "PRICE_NEAR_DAY_LOW",
+            "BREAKDOWN_BELOW_PREVIOUS_LOW"
+          ],
+          "explanation": "TSLA is ranked bearish with a 68/100 score because it shows volume 5.00x average, trading near day low $168.80, below previous low $171.00. Price is below VWAP $175.20."
+        }
+      ],
+      "signalsGenerated": []
+    }
+  ]
+}

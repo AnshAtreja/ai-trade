@@ -1,0 +1,42 @@
+---
+description: Keep docs/ui operator guides in sync when console controls change
+alwaysApply: true
+---
+
+# UI operator guide sync
+
+User-facing “what does this button do?” docs live under `docs/ui/`.
+
+## When you must update
+
+If you **add, remove, rename, enable/disable, or change the API** of any control on a web tab (button, toggle, pill, link that triggers work), update:
+
+1. Matching file in `docs/ui/` (e.g. Market → `docs/ui/market.md`)
+2. `docs/ui/README.md` — “What you can do right now” and/or suggested flow if capability changed
+3. `docs/ui/status-bar.md` — if header pills or mode semantics changed
+
+Skeleton → live: replace “Controls today: None” with a full controls table (Control · API · What happens).
+
+## File map
+
+| Route / page | Doc |
+| --- | --- |
+| `/` Overview | `docs/ui/overview.md` |
+| `/broker` | `docs/ui/broker.md` |
+| `/market` | `docs/ui/market.md` |
+| `/scanner` | `docs/ui/scanner.md` |
+| `/strategies` | `docs/ui/strategies.md` |
+| `/paper` | `docs/ui/paper.md` |
+| `/backtesting` | `docs/ui/backtesting.md` |
+| `/intelligence` | `docs/ui/intelligence.md` |
+| `/agent` | `docs/ui/agent.md` |
+| `/alerts` | `docs/ui/alerts.md` |
+| `/shadow-live` | `docs/ui/shadow-live.md` |
+| Status pills | `docs/ui/status-bar.md` |
+
+## Writing rules
+
+- Be literal: say what the click calls (`POST /api/...`) and what it does **not** do (especially live orders).
+- Distinguish **Paper enabled**, **Live disabled**, **Market REST/live**, **Kill switch** honestly — do not claim the kill switch blocks live if only the adapter does.
+- Keep each tab doc structured: purpose → controls table → status fields → does-not.
+- Still follow `docs-status-sync` for ROADMAP / phase / README status.

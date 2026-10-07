@@ -1,0 +1,654 @@
+// Persistent domain models for TradePilot AI (Phase 1A).
+// This schema is the database foundation only:
+// - persistent: User, BrokerConnection metadata, Instrument, snapshots, ScannerSignal, Strategy, Trade, Order, Position, RiskConfiguration, JournalEntry, SystemLog
+// - mock: existing API fixtures still run when PERSISTENCE_MODE=mock
+// - broker integration: BrokerConnection stores metadata + credentialRef only (never raw Kite tokens)
+// - paper trading: Order/Trade/Position rows are intended for PAPER mode
+// - live trading disabled: LIVE enum values exist for future use; no code path places live broker orders
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TradingMode {
+  PAPER
+  LIVE
+}
+
+enum OrderSide {
+  BUY
+  SELL
+}
+
+enum OrderStatus {
+  CREATED
+  SUBMITTED
+  OPEN
+  PARTIALLY_FILLED
+  FILLED
+  REJECTED
+  CANCELLED
+  FAILED
+  EXPIRED
+}
+
+/// Distinguishes paper entry vs exit tickets. Live placement remains disabled in application code.
+enum OrderPurpose {
+  ENTRY
+  EXIT
+}
+
+enum PaperOrderType {
+  MARKET
+  LIMIT
+}
+
+enum PositionStatus {
+  OPEN
+  CLOSED
+}
+
+enum SignalDirection {
+  BULLISH
+  BEARISH
+  NEUTRAL
+}
+
+enum TradeStatus {
+  PENDING
+  OPEN
+  CLOSED
+  CANCELLED
+  REJECTED
+}
+
+enum JournalEntryType {
+  NOTE
+  TRADE_REVIEW
+  RISK_EVENT
+  SYSTEM
+}
+
+enum SystemLogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+  SAFE
+  BLOCKED
+}
+
+enum BrokerConnectionStatus {
+  DISCONNECTED
+  CONNECTED
+  SANDBOX
+}
+
+enum StrategyStatus {
+  DRAFT
+  PAPER_READY
+  DISABLED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  brokerConnections  BrokerConnection[]
+  accountSnapshots   AccountSnapshot[]
+  brokerAccountSnapshots BrokerAccountSnapshot[]
+  scannerSignals     ScannerSignal[]
+  strategySetups     StrategySetup[]
+  strategies         Strategy[]
+  trades             Trade[]
+  orders             Order[]
+  positions          Position[]
+  riskConfigurations RiskConfiguration[]
+  paperAccounts      PaperAccount[]
+  journalEntries     JournalEntry[]
+  systemLogs         SystemLog[]
+
+  @@index([createdAt])
+}
+
+/// Broker account metadata only. Access tokens belong in BrokerCredentialStore, not this table.
+model BrokerConnection {
+  id            String                  @id @default(cuid())
+  userId        String
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brokerName    String
+  accountMask   String
+  status        BrokerConnectionStatus  @default(DISCONNECTED)
+  tradingMode   TradingMode             @default(PAPER)
+  /// Opaque pointer into encrypted credential storage. Never a plaintext token.
+  credentialRef String?
+  lastSyncedAt  DateTime?
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  accountSnapshots AccountSnapshot[]
+  orders           Order[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([tradingMode])
+  @@index([createdAt])
+}
+
+model Instrument {
+  id              String    @id @default(cuid())
+  symbol          String
+  exchange        String
+  name            String
+  instrumentToken String?
+  exchangeToken   String?
+  segment         String?
+  instrumentType  String?
+  expiry          DateTime?
+  strike          Decimal?  @db.Decimal(18, 6)
+  tickSize        Decimal   @default(0.05) @db.Decimal(18, 6)
+  lotSize         Int       @default(1)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  scannerSignals    ScannerSignal[]
+  strategySetups    StrategySetup[]
+  trades            Trade[]
+  orders            Order[]
+  positions         Position[]
+  marketSnapshots   MarketSnapshot[]
+  historicalCandles HistoricalCandle[]
+
+  @@unique([exchange, symbol])
+  @@index([symbol])
+  @@index([instrumentToken])
+  @@index([exchange, instrumentToken])
+  @@index([isActive])
+  @@index([segment])
+  @@index([instrumentType])
+  @@index([createdAt])
+}
+
+/// Immutable historical OHLCV observation (Phase 8A). Unique by instrumentToken+interval+timestamp.
+/// Default write path is insert-only (skip duplicates); no silent overwrite of OHLC.
+model HistoricalCandle {
+  id              String    @id @default(cuid())
+  instrumentId    String?
+  instrument      Instrument? @relation(fields: [instrumentId], references: [id], onDelete: SetNull)
+  instrumentToken String
+  exchange        String
+  tradingSymbol   String
+  /// Canonical intervals: "1m" | "5m" (storage). Kite "minute"/"5minute" map at the provider boundary.
+  interval        String
+  /// Candle open/start timestamp stored as UTC Instant. Exchange session interpretation uses Asia/Kolkata.
+  timestamp       DateTime
+  open            Decimal   @db.Decimal(18, 4)
+  high            Decimal   @db.Decimal(18, 4)
+  low             Decimal   @db.Decimal(18, 4)
+  close           Decimal   @db.Decimal(18, 4)
+  volume          Decimal   @db.Decimal(20, 2)
+  openInterest    Decimal?  @db.Decimal(20, 2)
+  /// KITE | MOCK | DERIVED_5M
+  source          String
+  /// UNADJUSTED | ADJUSTED | UNKNOWN — Phase 8A stores source representation without local CA adjustment.
+  adjustment      String    @default("UNKNOWN")
+  fetchedAt       DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+
+  @@unique([instrumentToken, interval, timestamp])
+  @@index([instrumentId, interval, timestamp])
+  @@index([instrumentToken, interval, timestamp])
+  @@index([timestamp, interval])
+  @@index([exchange, tradingSymbol, interval, timestamp])
+  @@index([source])
+  @@index([fetchedAt])
+}
+
+/// Historical observation of derived paper/live account state. Not the live ledger.
+/// tradingMode LIVE means real-broker/real-money *context*. It does not enable order execution.
+model AccountSnapshot {
+  id                 String            @id @default(cuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brokerConnectionId String?
+  brokerConnection   BrokerConnection? @relation(fields: [brokerConnectionId], references: [id], onDelete: SetNull)
+  tradingMode        TradingMode       @default(PAPER)
+  /// PAPER = virtual TradePilot money. KITE = read-only Zerodha account observation.
+  source             String            @default("PAPER")
+  sessionDate        String?
+  event              String?
+  status             String            @default("ACTIVE")
+  startingCapital    Decimal?          @db.Decimal(18, 2)
+  equity             Decimal           @db.Decimal(18, 2)
+  buyingPower        Decimal           @db.Decimal(18, 2)
+  availableCash      Decimal           @db.Decimal(18, 2)
+  usedMargin         Decimal           @db.Decimal(18, 2)
+  realizedPnl        Decimal           @db.Decimal(18, 2)
+  unrealizedPnl      Decimal           @db.Decimal(18, 2)
+  dayPnl             Decimal?          @db.Decimal(18, 2)
+  openExposure       Decimal?          @db.Decimal(18, 2)
+  riskUsedToday      Decimal?          @db.Decimal(18, 2)
+  tradesToday        Int?
+  openPositionCount  Int?
+  capturedAt         DateTime          @default(now())
+  createdAt          DateTime          @default(now())
+
+  @@index([userId])
+  @@index([tradingMode])
+  @@index([source])
+  @@index([sessionDate])
+  @@index([capturedAt])
+  @@index([createdAt])
+}
+
+/// Full normalized read-only broker account observation. JSON holds domain collections (not tokens, not raw Kite dumps).
+/// Required so GET /api/kite/account can be restored after restart without calling Kite again.
+model BrokerAccountSnapshot {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source          String      @default("KITE")
+  tradingMode     TradingMode @default(LIVE)
+  event           String
+  refreshStatus   String
+  equityNet       Decimal     @db.Decimal(18, 2)
+  availableCash   Decimal     @db.Decimal(18, 2)
+  usedMargin      Decimal     @db.Decimal(18, 2)
+  realizedPnl     Decimal     @db.Decimal(18, 2)
+  unrealizedPnl   Decimal     @db.Decimal(18, 2)
+  dayPnl          Decimal     @db.Decimal(18, 2)
+  positionCount   Int
+  orderCount      Int
+  holdingCount    Int
+  state           Json
+  capturedAt      DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+
+  @@index([userId])
+  @@index([source])
+  @@index([tradingMode])
+  @@index([capturedAt])
+}
+
+/// Authoritative persisted starting-capital record. Env vars do not overwrite this after init.
+model PaperAccount {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tradingMode     TradingMode @default(PAPER)
+  startingCapital Decimal     @db.Decimal(18, 2)
+  initializedAt   DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([userId, tradingMode])
+  @@index([userId])
+  @@index([tradingMode])
+}
+
+/// Immutable market observation. Not a mutable current-price row. High-frequency ticks are Phase 4.
+model MarketSnapshot {
+  id              String      @id @default(cuid())
+  instrumentId    String?
+  instrument      Instrument? @relation(fields: [instrumentId], references: [id], onDelete: SetNull)
+  instrumentToken String?
+  symbol          String
+  exchange        String?
+  source          String      @default("KITE")
+  lastPrice       Decimal     @db.Decimal(18, 4)
+  openPrice       Decimal?    @db.Decimal(18, 4)
+  highPrice       Decimal?    @db.Decimal(18, 4)
+  lowPrice        Decimal?    @db.Decimal(18, 4)
+  closePrice      Decimal?    @db.Decimal(18, 4)
+  volume          Decimal?    @db.Decimal(20, 2)
+  averagePrice    Decimal?    @db.Decimal(18, 4)
+  buyQuantity     Decimal?    @db.Decimal(20, 2)
+  sellQuantity    Decimal?    @db.Decimal(20, 2)
+  capturedAt      DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+
+  @@index([symbol])
+  @@index([instrumentToken])
+  @@index([instrumentId, capturedAt])
+  @@index([capturedAt])
+  @@index([createdAt])
+}
+
+/// Candidate generated by the scanner. Not an order or trade.
+model ScannerSignal {
+  id               String           @id @default(cuid())
+  userId           String
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  instrumentId     String?
+  instrument       Instrument?      @relation(fields: [instrumentId], references: [id], onDelete: SetNull)
+  symbol           String
+  direction        SignalDirection
+  score            Int
+  matchedSignals   String[]
+  explanation      String
+  entryTrigger     Decimal?         @db.Decimal(18, 4)
+  stopLoss         Decimal?         @db.Decimal(18, 4)
+  target           Decimal?         @db.Decimal(18, 4)
+  riskAmount       Decimal?         @db.Decimal(18, 2)
+  riskApproved     Boolean          @default(false)
+  suggestedAction  String?
+  confidenceLabel  String?
+  tradingMode      TradingMode      @default(PAPER)
+  sessionDate      String
+  /// Stable identity for a user/symbol/direction/session so rescans upsert instead of duplicating.
+  dedupeKey        String           @unique
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  trades Trade[]
+
+  @@index([userId])
+  @@index([symbol])
+  @@index([tradingMode])
+  @@index([createdAt])
+  @@index([sessionDate, symbol])
+}
+
+model Strategy {
+  id          String         @id @default(cuid())
+  ownerId     String
+  owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name        String
+  status      StrategyStatus @default(DRAFT)
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  trades Trade[]
+  orders Order[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// Historical strategy setup (Phase 6). Analytical only — not an order.
+model StrategySetup {
+  id                   String          @id @default(cuid())
+  userId               String
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  setupIdentity        String          @unique
+  strategyId           String
+  strategyVersion      String
+  instrumentId         String?
+  instrument           Instrument?     @relation(fields: [instrumentId], references: [id], onDelete: SetNull)
+  instrumentToken      String?
+  symbol               String
+  exchange             String?
+  direction            SignalDirection
+  status               String
+  confidence           Int?
+  confidenceComponents Json?
+  entryType            String?
+  entryPrice           Decimal?        @db.Decimal(18, 4)
+  stopLoss             Decimal         @db.Decimal(18, 4)
+  target               Decimal         @db.Decimal(18, 4)
+  rewardRisk           Decimal         @db.Decimal(8, 4)
+  riskPerUnit          Decimal?        @db.Decimal(18, 4)
+  conditions           Json
+  reasons              String[]
+  invalidation         Json?
+  scannerSignalId      String?
+  marketDataTimestamp  DateTime?
+  marketSession        String?
+  capturedAt           DateTime
+  createdAt            DateTime        @default(now())
+
+  @@index([userId])
+  @@index([strategyId])
+  @@index([symbol])
+  @@index([capturedAt])
+  @@index([instrumentToken])
+}
+
+/// Completed or managed trading decision (paper or, later, live). Distinct from Order and Position.
+model Trade {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  strategyId      String?
+  strategy        Strategy?     @relation(fields: [strategyId], references: [id], onDelete: SetNull)
+  scannerSignalId String?
+  scannerSignal   ScannerSignal? @relation(fields: [scannerSignalId], references: [id], onDelete: SetNull)
+  instrumentId    String?
+  instrument      Instrument?   @relation(fields: [instrumentId], references: [id], onDelete: SetNull)
+  symbol          String
+  side            OrderSide
+  status          TradeStatus   @default(PENDING)
+  tradingMode     TradingMode   @default(PAPER)
+  quantity        Int
+  entryPrice      Decimal       @db.Decimal(18, 4)
+  stopLoss        Decimal?      @db.Decimal(18, 4)
+  targetPrice     Decimal?      @db.Decimal(18, 4)
+  exitPrice       Decimal?      @db.Decimal(18, 4)
+  pnl             Decimal       @default(0) @db.Decimal(18, 2)
+  maxLoss         Decimal?      @db.Decimal(18, 2)
+  rewardToRisk    Decimal?      @db.Decimal(8, 4)
+  exitReason      String?
+  strategyName    String?
+  explanation     String?
+  /// Gross P&L before paper charges (Phase 7).
+  grossPnl        Decimal?      @db.Decimal(18, 2)
+  /// Simulated transaction charges (Phase 7).
+  charges         Decimal?      @db.Decimal(18, 2)
+  strategySetupId String?
+  instrumentToken String?
+  openedAt        DateTime?
+  closedAt        DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  orders        Order[]
+  positions     Position[]
+  journalEntries JournalEntry[]
+
+  @@index([userId])
+  @@index([symbol])
+  @@index([status])
+  @@index([tradingMode])
+  @@index([strategyId])
+  @@index([strategySetupId])
+  @@index([createdAt])
+}
+
+/// Broker or paper order lifecycle. Live placement is disabled in application code.
+model Order {
+  id                 String            @id @default(cuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tradeId            String?
+  trade              Trade?            @relation(fields: [tradeId], references: [id], onDelete: SetNull)
+  positionId         String?
+  position           Position?         @relation(fields: [positionId], references: [id], onDelete: SetNull)
+  strategyId         String?
+  strategy           Strategy?         @relation(fields: [strategyId], references: [id], onDelete: SetNull)
+  brokerConnectionId String?
+  brokerConnection   BrokerConnection? @relation(fields: [brokerConnectionId], references: [id], onDelete: SetNull)
+  instrumentId       String?
+  instrument         Instrument?       @relation(fields: [instrumentId], references: [id], onDelete: SetNull)
+  brokerOrderId      String?
+  clientOrderId      String?
+  idempotencyKey     String?
+  symbol             String
+  side               OrderSide
+  status             OrderStatus       @default(CREATED)
+  purpose            OrderPurpose      @default(ENTRY)
+  tradingMode        TradingMode       @default(PAPER)
+  orderType          PaperOrderType    @default(MARKET)
+  quantity           Int
+  filledQuantity     Int               @default(0)
+  price              Decimal?          @db.Decimal(18, 4)
+  limitPrice         Decimal?          @db.Decimal(18, 4)
+  averageFillPrice   Decimal?          @db.Decimal(18, 4)
+  instrumentToken    String?
+  strategySetupId    String?
+  rejectionCode      String?
+  rejectionSource    String?
+  submittedAt        DateTime?
+  firstFillAt        DateTime?
+  filledAt           DateTime?
+  cancelledAt        DateTime?
+  rejectedAt         DateTime?
+  expiredAt          DateTime?
+  executableAt       DateTime?
+  executionProvenance Json?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  fills PaperFill[]
+
+  @@unique([brokerOrderId])
+  @@unique([clientOrderId])
+  @@unique([idempotencyKey])
+  @@index([userId])
+  @@index([symbol])
+  @@index([status])
+  @@index([tradingMode])
+  @@index([brokerOrderId])
+  @@index([strategyId])
+  @@index([tradeId])
+  @@index([purpose])
+  @@index([createdAt])
+  @@index([instrumentToken])
+  @@index([executableAt])
+}
+
+/// Individual simulated fill for a paper order (Phase 7). Not a live broker fill.
+model PaperFill {
+  id              String   @id @default(cuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId          String
+  quantity        Int
+  price           Decimal  @db.Decimal(18, 4)
+  fillKey         String   @unique
+  marketTimestamp DateTime?
+  receivedAt      DateTime?
+  referenceLtp    Decimal? @db.Decimal(18, 4)
+  referenceBid    Decimal? @db.Decimal(18, 4)
+  referenceAsk    Decimal? @db.Decimal(18, 4)
+  referenceBidQty Decimal? @db.Decimal(20, 2)
+  referenceAskQty Decimal? @db.Decimal(20, 2)
+  slippageAmount  Decimal? @db.Decimal(18, 6)
+  provenance      Json?
+  createdAt       DateTime @default(now())
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/// Currently open (or historically closed) exposure.
+model Position {
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tradeId      String?
+  trade        Trade?         @relation(fields: [tradeId], references: [id], onDelete: SetNull)
+  instrumentId String?
+  instrument   Instrument?    @relation(fields: [instrumentId], references: [id], onDelete: SetNull)
+  symbol       String
+  side         OrderSide      @default(BUY)
+  status       PositionStatus @default(OPEN)
+  tradingMode  TradingMode    @default(PAPER)
+  quantity     Int
+  originalQuantity Int?
+  averagePrice Decimal        @db.Decimal(18, 4)
+  currentPrice Decimal?       @db.Decimal(18, 4)
+  stopLoss     Decimal?       @db.Decimal(18, 4)
+  targetPrice  Decimal?       @db.Decimal(18, 4)
+  unrealizedPnl Decimal       @default(0) @db.Decimal(18, 2)
+  realizedPnl  Decimal        @default(0) @db.Decimal(18, 2)
+  exitReason   String?
+  instrumentToken String?
+  lastProcessedTickKey String?
+  exitInProgress Boolean      @default(false)
+  openedAt     DateTime       @default(now())
+  closedAt     DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  orders Order[]
+
+  @@index([userId])
+  @@index([symbol])
+  @@index([status])
+  @@index([tradingMode])
+  @@index([tradeId])
+  @@index([instrumentToken])
+  @@index([createdAt])
+}
+
+model RiskConfiguration {
+  id                    String      @id @default(cuid())
+  userId                String
+  user                  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tradingMode           TradingMode @default(PAPER)
+  capital               Decimal     @db.Decimal(18, 2)
+  maxRiskPerTradePercent Decimal    @db.Decimal(6, 3)
+  maxDailyLossPercent   Decimal     @db.Decimal(6, 3)
+  maxTradesPerDay       Int
+  maxPositionSize       Decimal     @db.Decimal(18, 2)
+  maxOpenPositions      Int         @default(5)
+  maxCapitalExposure    Decimal     @default(100000) @db.Decimal(18, 2)
+  allowShortSelling     Boolean     @default(false)
+  tradeStartTime        String
+  tradeEndTime          String
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@unique([userId, tradingMode])
+  @@index([userId])
+  @@index([tradingMode])
+}
+
+model JournalEntry {
+  id        String           @id @default(cuid())
+  authorId  String
+  author    User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  tradeId   String?
+  trade     Trade?           @relation(fields: [tradeId], references: [id], onDelete: SetNull)
+  type      JournalEntryType @default(NOTE)
+  title     String
+  body      String
+  mood      String?
+  tags      String[]
+  symbol    String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([authorId])
+  @@index([symbol])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model SystemLog {
+  id        String         @id @default(cuid())
+  userId    String?
+  user      User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  level     SystemLogLevel
+  source    String
+  message   String
+  metadata  Json?
+  createdAt DateTime       @default(now())
+
+  @@index([userId])
+  @@index([level])
+  @@index([source])
+  @@index([createdAt])
+}

@@ -1,0 +1,14 @@
+---
+description: API layering and scope discipline for TradePilot modules
+globs: apps/api/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# API architecture
+
+- Prefer **route → service → repository → Prisma/mock**. Keep HTTP thin; domain logic in services.
+- Respect phase **out of scope** lists. Do not pull Phase 8+ (backtest, Kronos, LLM, RAG, decision engine, live orders) into earlier modules.
+- Persistence: support `PERSISTENCE_MODE=mock` and `database` via repository contracts.
+- Errors: typed domain errors with stable codes; avoid leaking stack traces in JSON.
+
+Scanner candidates ≠ strategy setups ≠ paper orders. Keep those boundaries explicit in types and APIs.

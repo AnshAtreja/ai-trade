@@ -1,0 +1,71 @@
+---
+description: Keep every phase's roadmap, implementation record, and interview notes complete and synchronized
+alwaysApply: true
+---
+
+# Phase documentation gate
+
+The canonical documentation for phase `XX` lives under:
+
+```text
+docs/phases/phase-XX-short-name/
+  overview.md
+  roadmap.md
+  implementation.md
+  interview.md
+```
+
+Phase 8 may also contain `decisions.md` and research-artifact references.
+
+## Before starting a phase
+
+1. Read the current phase folder and the previous phase folders.
+2. Confirm that previous phases have both planned scope and actual implementation notes.
+3. Do not overwrite historical implementation notes with a new plan.
+4. Record dependencies and frozen identities before changing code.
+5. Do not create new root-level files like `docs/phases/phase-XX-name.md`; phase documentation belongs inside the named phase folder.
+
+## When implementing a phase
+
+1. Update `roadmap.md` only for scope, status, dependencies, and acceptance criteria.
+2. Update `implementation.md` with what was actually built, files/modules, tests, architecture decisions, safety boundaries, and known limitations.
+3. Update `interview.md` as a genuine interview-preparation chapter, not a short summary. It must explain in plain language:
+   - the before-and-after story and why the phase exists;
+   - the implemented architecture and ownership boundaries;
+   - each material problem actually encountered, its root cause, fix, and verification;
+   - important alternatives, architectural decisions, and tradeoffs;
+   - safety, data-quality, determinism, and leakage boundaries where relevant;
+   - honest limitations and unresolved evidence;
+   - a concise 30-second answer, a 60-90 second answer, and likely follow-up questions.
+   Use concrete measurements, artifact identities, incidents, and test evidence when they exist. Do not invent problems merely to make the story sound impressive.
+4. Add a separate decision, migration, validation, or artifact document when the phase has enough complexity that one file would hide important history.
+
+## When completing a phase
+
+1. Audit every previous phase folder for stale `planned`, `in progress`, or placeholder language.
+2. Verify that `docs/ROADMAP.md`, the root `README.md`, phase folders, and relevant UI status all agree.
+3. Preserve unresolved limitations and failed approaches; do not rewrite history to make the phase look effortless.
+4. Link exact test commands, artifact IDs, dataset identities, and safety confirmations where they exist.
+5. Never mark a future phase implemented merely because its skeleton was created.
+6. Confirm `overview.md`, `roadmap.md`, `implementation.md`, and `interview.md` are all current for the completed phase.
+
+## Interview-note quality gate
+
+For a completed phase, `interview.md` must be useful without requiring the reader to reconstruct the story from commit history or chat transcripts. A heading followed by one sentence is not sufficient for a material implementation area.
+
+For a complex phase, split the explanation by subphase or major capability and preserve important failed approaches and operational incidents. Prefer a concrete narrative such as:
+
+```text
+symptom
+  -> evidence or profile
+  -> root cause
+  -> design change
+  -> equivalence/safety verification
+  -> measured outcome
+```
+
+For a future phase, keep an explicit `NOT STARTED` skeleton with prompts for the same sections. Do not pre-fill proposed architecture as though it already exists.
+
+## Safety
+
+Documentation status must never authorize live trading. Phase status is a record of verified work, not permission to skip research, approval, or broker-safety gates.

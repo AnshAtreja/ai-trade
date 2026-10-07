@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.cursor
+*.md
+apps/web/dist
+apps/api/dist
+reports
+fixtures
+.env
+apps/api/.env
+**/.DS_Store
+**/coverage
